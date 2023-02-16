@@ -1,0 +1,20 @@
+Na samym szczycie każdego pola klasa: filed
+   w środku labele input i ostrzeżenia pod nimi jak coś nie tak.
+
+Na każdym labelu klasa: label
+
+Bezpośrednio nad inputem klasa: control
+
+Na każdym inpucie klasa: input
+        W każdym inpucie atrybuty:
+                - type="text"
+                - type="password"
+                - type="email"
+Opcjonalnie na inpucie klasa koloru obramowania: 
+    - is-primary
+    - is-link
+    - is-sucess
+
+Wewnątrz klasy field a nad control można dodać div'a z błędem lub komunikatem że dobrze (klasa: help)
+    - help is-sucess
+    - help is-danger

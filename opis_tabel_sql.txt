@@ -1,0 +1,21 @@
+1. Tabela ze słowami
+    ID
+    Słowo
+
+2. Tabela słowo - użytkownik
+    ID
+    ID słowa
+    ID użytkownika
+
+3. Tabela użytkownik
+    ID
+    email
+    hasło
+
+4. Tłumaczenia
+    ID
+    ID słowa
+    Tłumaczenie
+    Przykład 
+    
+Server name: DESKTOP-ROLE354
