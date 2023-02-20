@@ -55,8 +55,8 @@ IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='translations' and xtype='U')
 BEGIN
     CREATE TABLE translations (
         Id INT PRIMARY KEY IDENTITY (1, 1),
-        wordId INT,
-		    translation VARCHAR(30)
+        wordId INT NOT NULL,
+		translation VARCHAR(30)
     )
 
 	ALTER TABLE dbo.translations
@@ -91,30 +91,12 @@ END
 
 GO
 
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='word_translations' and xtype='U')
-BEGIN
-    CREATE TABLE word_translations (
-        Id INT PRIMARY KEY IDENTITY (1, 1),
-        wordId INT,
-		translationId INT,
-    )
-
-	ALTER TABLE dbo.word_translations
-			ADD CONSTRAINT uq_word_translations UNIQUE(wordId, translationId);
-END
-
-
 ALTER TABLE dbo.user_words
    ADD CONSTRAINT FK_UserWords_Words FOREIGN KEY (wordId)
       REFERENCES dbo.words (Id)
 
 GO
 
-ALTER TABLE dbo.word_translations
-   ADD CONSTRAINT FK_UserWords_Translations FOREIGN KEY (translationId)
-      REFERENCES dbo.translations (Id)
-
-GO
 
 ALTER TABLE dbo.user_files
    ADD CONSTRAINT FK_UserFiles_Users FOREIGN KEY (userId)
@@ -132,3 +114,16 @@ GO
 
 -- ALTER TABLE word_translations
 -- 	DROP CONSTRAINT  FK_UserWords_Translations
+
+-- Prawdopodobnie nie potrzebne
+-- IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='word_translations' and xtype='U')
+-- BEGIN
+--     CREATE TABLE word_translations (
+--         Id INT PRIMARY KEY IDENTITY (1, 1),
+--         wordId INT,
+-- 		translationId INT,
+--     )
+
+-- 	ALTER TABLE dbo.word_translations
+-- 			ADD CONSTRAINT uq_word_translations UNIQUE(wordId, translationId);
+-- END

@@ -4,6 +4,8 @@ const { send } = require('node:process');
 const { v4: uuidv4 } = require('uuid');
 const fileUpload = require('express-fileupload')
 const path = require('node:path')
+const {checkIfWordExits, getTranslations, addTranslation} = require('./sql/procedures.js')
+const bodyParser = require('body-parser')
 
 const filesPayloadExists = require('./middleware/filesPayloadExists');
 const fileExtLimiter = require('./middleware/fileExtLimiter');
@@ -15,7 +17,7 @@ const server = express();
 //     useTempFiles : true,
 //     tempFileDir : '/tmp/'
 // }))
-
+server.use(bodyParser.json());
 server.use((req, res, next) => {
     res.append('Access-Control-Allow-Origin', ['*']);
     res.append('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
@@ -23,17 +25,6 @@ server.use((req, res, next) => {
     next();
 });
 
-
-server.get('/x/:text', async (req, res) => {
-    const {text} = req.params;
-    console.srog(text);
-    res.send('<p>Think you</p>')
-})
-server.get('/y/:text', (req, res) => {
-    const {text} = req.params;
-    console.log(text);
-    res.send('<p>Think you</p>')
-})
 // Dodaj plik na serwer   
 server.post('/upload',
     fileUpload({ createParentPath: true }),
@@ -59,8 +50,8 @@ server.post('/upload',
 // Dodaj słowo do bazy danych
 server.post('word/:wordname', async (req, res) => {
     const {wordname} = req.params;
-    const isPresent = await checkIfExits(wordname);
-    let translations = '';
+    const isPresent = await checkIfWordExits(wordname);
+    let translations = ''
     if (! isPresent) {
         translations = getTranslationsFromDictionary();
     }
@@ -68,27 +59,31 @@ server.post('word/:wordname', async (req, res) => {
 })
 
 // Dodaj tłumacznie do słowa
-server.post('/translation/:wordname', async (req, res) => {
-    const {wordname} = res.params.wordname
-    // użyć body parsera żeby wydobyć tłumaczenie
-    const translation = ''
-
-    await addTranslationsToDatabase(translation)
+server.post('/translation/', async (req, res) => {
+     const {wordName, translation} = req.body.list[0]
+     await addTranslation(wordName, translation)
+     res.json("Dodano tłumaczenie")
 })
 
 // Pobierz tłumaczenie dla danego słowa
 server.get('/translation/:wordName', async (req, res) => {
-    const {wordname} = req.params;
-    let tranlations = await getTranslationsFromDatabase();
-    if (! tranlations) {
-        translations = await getTranslationsFromDictionary();
-    }
-    if (tranlations) {
-        await addTranslationsToDatabase(tranlations) 
-    }
-    
+    let translations = await getTranslations(req.params.wordName);
+    // if (! translations) {
+    //     translations = await getTranslationsFromDictionary(wordName);
+    // }
+    // if (translations) {
+    //     await addTranslationsToDatabase(translations) 
+    // }
+    res.json(translations)
     // Zrobić z tego JSON (w notatkach zapisać jego format)
     // i wysłać na front
+})
+
+// sprawdź czy słowo jest w bazie
+server.get('/word/:wordname', async (req, res) => {
+    const word = req.params.wordname;
+    const isWord = await checkIfWordExits(word)
+    res.json(isWord)
 })
 
 server.use((error, req, res, next) => {

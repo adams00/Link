@@ -50,3 +50,32 @@ BEGIN
 	INSERT INTO dbo.user_words (wordId, userId)
 	SELECT SCOPE_IDENTITY(), @userId
 END
+
+CREATE PROCEDURE usp_check_word @name VARCHAR(100)
+AS
+BEGIN
+SELECT COUNT(*)
+FROM [mini_linq].[dbo].[words]
+WHERE [name] = @name
+END
+
+CREATE PROCEDURE usp_add_translation @word VARCHAR(100), @translation VARCHAR(100)
+AS
+BEGIN
+	DECLARE @wordId INT = (
+		SELECT w.id
+		FROM dbo.words w
+		WHERE w.[name] = @word
+	)
+	INSERT INTO dbo.translations (wordId, translation)
+	SELECT @wordId, @translation
+END
+
+CREATE PROCEDURE usp_get_translations @wordName NVARCHAR(100)
+AS
+BEGIN
+	SELECT t.translation
+	FROM dbo.words w
+	JOIN dbo.translations t ON w.id = t.wordId
+	WHERE w.name = @wordName
+END
