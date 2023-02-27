@@ -22,9 +22,9 @@ async function getWord(word, page) {
   const resultsSelector = 'ol';
   await page.waitForSelector(resultsSelector);
 
-  const translations = await page.evaluate((resultsSelector) => {
+  const translations = await page.evaluate((resultsSelector, word) => {
     return [...document.querySelectorAll('li')].map(anchor => {
-      return {word: 'XXX', translation: anchor.querySelector('span.hw').textContent.trim(), examples:
+      return {word: word, translation: anchor.querySelector('span.hw').textContent.trim(), examples:
               [...anchor.querySelectorAll('.exampleSentence')].map(sentence => {
                 const [eng, pl] = sentence.textContent.split(/\r?\n/) // rozdziel na przykład + tłumaczenie + szum
                 .map(word => word.trim()) // usuń białe znaki z przykładu i tłumaczenia, zmień szum na puste stringi
@@ -35,7 +35,7 @@ async function getWord(word, page) {
   }});
   }, resultsSelector);
 
-  fs.writeFile( 'C:/Users/Adam/Desktop/translations.txt', JSON.stringify({translations: links}), {encoding:'utf8'}, ()=>{});
+  fs.writeFile( 'C:/Users/Adam/Desktop/translations.txt', JSON.stringify({translations: translations}), {encoding:'utf8'}, ()=>{});
   return translations;
 }
 
