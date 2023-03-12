@@ -1,73 +1,61 @@
 import './App.css';
 import 'bulma'
-import FileUploadSingle from './form.jsx'
+import FileUploadMultiple from './form.jsx'
+import { textArray } from './initial_text';
+import { useReducer, useState } from 'react';
+import { Wrapper } from './LiftingStateTest.jsx';
+import { Translations } from './Translation.js'
 
 function App() {
   return (
     <div className="container">
       <div className="columns navbar">
-        <div className='column background-green'></div>
+        <div className='column background-green'>
+          <Wrapper />
+        </div>
       </div>
       <div className="columns">
         <div className='column is-one-fifth background-gold'>
-          <Login/>
-          <FileUploadSingle/>
+          <Login />
+          <FileUploadMultiple />
         </div>
         <div className='column is-three-fifths background-pink'>
-          <Text/>
+          <Text />
         </div>
-        <div className='column is-one-fifth background-burlywood'></div>
+        <div className='column is-one-fifth background-burlywood'>
+          <Translations />
+        </div>
       </div>
       <div className="columns navbar">
-        <div className='column background-silver'></div>
+        <div className='column background-silver'>
+          {/* <RemoveMe /> */}
+        </div>
       </div>
     </div>
   );
 }
 
-function SignUp() {
-  return (
-    <div>
-
-      <div className="filed">
-        <div className="control">
-          <label className="label is-sucess">Username</label>
-          <input className="input" type="text"></input>
-        </div>
-      </div>
-
-      <div className="filed">
-        <div className="control">
-          <label className="label is-sucess">Password</label>
-          <input className="input" type="password"></input>
-        </div>
-      </div>
-
-      <div className="filed">
-        <div className="control">
-          <label className="label is-sucess">Email</label>
-          <input className="input" type="email"></input>
-        </div>
-      </div>
-    </div>
-  )
-};
-
 function Login() {
+  let [state, dispatch] = useReducer((state, action) => ({
+    ...state,
+    ...action
+  }), {
+    email: '',
+    password: ''
+  })
   return (
     <div>
-
       <div className="filed">
         <div className="control">
-          <label className="label is-sucess">Username</label>
-          <input className="input" type="text"></input>
+          <label value={state.email} className="label is-sucess">Email</label>
+          <input className="input" type="text" onChange={(e) => { dispatch({ email: e.target.value }) }}></input>
         </div>
       </div>
 
       <div className="filed">
         <div className="control">
           <label className="label is-sucess">Password</label>
-          <input className="input" type="password"></input>
+          <input value={state.password} className="input" type="password" onChange={(e) => { dispatch({ password: e.target.value }) }}></input>
         </div>
       </div>
 
@@ -97,47 +85,39 @@ function Login() {
 
 
 function Word(props) {
+  let learned = props.learned | false;
+  const [active, setActive] = useState(false);
+  function getproperClass(learned, active) {
+    const lightness = learned ? 'is-light' : 'is-link'
+    const activeness = active ? 'has-background-success' : '';
+    return `tag is-link is-medium px-1 mx-0 ${lightness} ${activeness}`
+  }
+  function toggleActive() {
+    if (active) {
+      setActive(false)
+    } else {
+      setActive(true)
+    }
+  }
   return (
-    <span>{props.word}</span>
+    <span className={getproperClass(learned, active)} onClick={() => toggleActive()}>
+      {props.word}
+    </span>
   )
 }
 
 function Text() {
-  const testArrayOfWords = ['Nic dwa razy',
-  'Nic dwa raz się nie zdarza',
-  'i nie zdarzy. Z tej przyczyny',
-  'zrodziliśmy sie bez wprawy',
-  'i pomrzemy bez rutyny.',
-  'Choćbyśmy uczniami byli',
-  'najtępszymi w szkole świata',
-  'nie będziemy repetować',
-  'żadnej zimy ani lata.',
-  'Żaden dzień się nie powtórzy,',
-  'nie ma dwóch tych samych nocy,',
-  'dwóch tych samych pocałunków,',
-  'dwóch jednakich spojrzeń w oczy.',
-  'Wczoraj, kiedy twoje imię',
-  'ktoś wymówił przy mnie głośno,',
-  'tak mi byo, jakby róża',
-  'przez otwarte wpadła okno.',
-  'Dziś, kiedy jesteśmy razem,',
-  'odwróciłam twarz ku ścianie.',
-  'Róża ? Jak wygląda róża?',
-  'Czy to kwiat ? A może kamień ?',
-  'Czemu ty się, zła godzino,',
-  'z niepotrzebnym mieszasz lękiem ?',
-  'Jesteś - a więc musisz minąć.',
-  'Miniesz - a więc to jest piękne.',
-  'Uśmiechnięci, współobjęci',
-  'spróbujemy szkać zgody,',
-  'choć różnimy się od siebie',
-  'jak dwie krople czystej wody.',
-  ]
+  const testArrayOfWords = textArray
+
   return (
     <div>
       {testArrayOfWords.map(word => {
-          return <Word word={word} key={Math.random()}/>
-        })}
+        return <Word
+          word={word}
+          key={Math.random()}
+          learned={Math.random() < 0.5}
+        />
+      })}
     </div>
   )
 }
