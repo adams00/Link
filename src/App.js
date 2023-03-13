@@ -4,9 +4,10 @@ import FileUploadMultiple from './form.jsx'
 import { textArray } from './initial_text';
 import { useReducer, useState } from 'react';
 import { Wrapper } from './LiftingStateTest.jsx';
-import { Translations } from './Translation.js'
+import { Translations } from './Translations.jsx'
 
 function App() {
+  const [currentWord, setCurrentWord] = useState('black')
   return (
     <div className="container">
       <div className="columns navbar">
@@ -20,15 +21,14 @@ function App() {
           <FileUploadMultiple />
         </div>
         <div className='column is-three-fifths background-pink'>
-          <Text />
+          <Text onChangeCurrentWord={setCurrentWord} />
         </div>
         <div className='column is-one-fifth background-burlywood'>
-          <Translations />
+          <Translations currentWord={currentWord} />
         </div>
       </div>
       <div className="columns navbar">
         <div className='column background-silver'>
-          {/* <RemoveMe /> */}
         </div>
       </div>
     </div>
@@ -84,8 +84,8 @@ function Login() {
 // }
 
 
-function Word(props) {
-  let learned = props.learned | false;
+function Word({ learned = false, word, onChangeCurrentWord }) {
+
   const [active, setActive] = useState(false);
   function getproperClass(learned, active) {
     const lightness = learned ? 'is-light' : 'is-link'
@@ -100,21 +100,26 @@ function Word(props) {
     }
   }
   return (
-    <span className={getproperClass(learned, active)} onClick={() => toggleActive()}>
-      {props.word}
+    <span className={getproperClass(learned, active)}
+      onClick={() => {
+        toggleActive();
+        onChangeCurrentWord(word)
+      }}>
+      {word}
     </span>
   )
 }
 
-function Text() {
+function Text({ onChangeCurrentWord }) {
   const testArrayOfWords = textArray
 
   return (
     <div>
-      {testArrayOfWords.map(word => {
+      {testArrayOfWords.map((word, index) => {
         return <Word
           word={word}
-          key={Math.random()}
+          key={index}
+          onChangeCurrentWord={onChangeCurrentWord}
           learned={Math.random() < 0.5}
         />
       })}
