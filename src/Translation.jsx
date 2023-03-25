@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bulma"
+import { MdExpandMore, MdOutlineExpandLess } from "react-icons/md"
 
 export function Translation({ translation, examples, isExample }) {
     const [hidden, setHidden] = useState(true);
@@ -13,23 +14,43 @@ export function Translation({ translation, examples, isExample }) {
 
     const hasExample = examples.length > 0;
 
+    const style = {
+        width: '100%'
+    }
     return (
         <article className="message is-info">
+            {/* <div className="message-header">
+                <p className="icon-text">
+                    {
+                        hasExample && <span className="icon"><MdExpandMore className="icon" onClick={toggleHidden}></MdExpandMore></span>
+                    }
+                </p>
+            </div> */}
             <div className="message-header">
-                <p>{translation}</p>
-                {
-                    hasExample && <button className="delete" aria-label="delete" onClick={toggleHidden}></button>
-                }
-
+                <div className="is-flex is-justify-content-space-between is-flex-direction-row" style={style}>
+                    <div className="is-flex  is-flex-direction-column is-justify-content-center">
+                        <p className="">{translation}</p>
+                    </div>
+                    <div>
+                        {
+                            hasExample && (
+                                hidden ?
+                                    <span><MdExpandMore className="icon is-large" onClick={toggleHidden}></MdExpandMore></span>
+                                    :
+                                    <span><MdOutlineExpandLess className="icon is-large" onClick={toggleHidden}></MdOutlineExpandLess></span>
+                            )
+                        }
+                    </div>
+                </div>
             </div>
             <div className={`message-body ${hidden ? 'is-hidden' : ''}`}>
                 {examples.map(({ eng, pl }, index) => {
                     return (
-                        <p key={index}>
+                        <div key={index}>
                             <p>{eng}</p>
                             <p>{pl}</p>
                             <br></br>
-                        </p>
+                        </div>
                     )
                 })
                 }

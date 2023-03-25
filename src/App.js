@@ -94,14 +94,19 @@ function Word({ learned = false, word, onChangeCurrentWord, active = false, word
   function toggleActive() {
     setActiveWordIndex(wordIndex)
   }
+
+  const style = {
+    borderRadius: '0px'
+  }
   return (
     <span className={getproperClass(learned, active)}
+      style={style}
       onClick={() => {
         toggleActive();
         onChangeCurrentWord(word)
       }}>
       {word}
-    </span>
+    </span >
   )
 }
 
