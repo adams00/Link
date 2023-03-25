@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import "bulma"
 
-export function Translation({ translation, examples }) {
-    console.log(translation + " " + examples)
+export function Translation({ translation, examples, isExample }) {
     const [hidden, setHidden] = useState(true);
-
     function toggleHidden() {
         if (hidden) {
             setHidden(false)
@@ -13,11 +11,16 @@ export function Translation({ translation, examples }) {
         }
     }
 
+    const hasExample = examples.length > 0;
+
     return (
         <article className="message is-info">
             <div className="message-header">
                 <p>{translation}</p>
-                <button className="delete" aria-label="delete" onClick={toggleHidden}></button>
+                {
+                    hasExample && <button className="delete" aria-label="delete" onClick={toggleHidden}></button>
+                }
+
             </div>
             <div className={`message-body ${hidden ? 'is-hidden' : ''}`}>
                 {examples.map(({ eng, pl }, index) => {

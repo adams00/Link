@@ -3,16 +3,16 @@ import 'bulma'
 import FileUploadMultiple from './form.jsx'
 import { textArray } from './initial_text';
 import { useReducer, useState } from 'react';
-import { Wrapper } from './LiftingStateTest.jsx';
+// import { Wrapper } from './LiftingStateTest.jsx';
 import { Translations } from './Translations.jsx'
 
 function App() {
-  const [currentWord, setCurrentWord] = useState('black')
+  const [currentWord, setCurrentWord] = useState('pink')
   return (
     <div className="container">
       <div className="columns navbar">
         <div className='column background-green'>
-          <Wrapper />
+          {/* <Wrapper /> */}
         </div>
       </div>
       <div className="columns">
@@ -84,20 +84,15 @@ function Login() {
 // }
 
 
-function Word({ learned = false, word, onChangeCurrentWord }) {
+function Word({ learned = false, word, onChangeCurrentWord, active = false, wordIndex, setActiveWordIndex }) {
 
-  const [active, setActive] = useState(false);
   function getproperClass(learned, active) {
     const lightness = learned ? 'is-light' : 'is-link'
     const activeness = active ? 'has-background-success' : '';
     return `tag is-link is-medium px-1 mx-0 ${lightness} ${activeness}`
   }
   function toggleActive() {
-    if (active) {
-      setActive(false)
-    } else {
-      setActive(true)
-    }
+    setActiveWordIndex(wordIndex)
   }
   return (
     <span className={getproperClass(learned, active)}
@@ -111,6 +106,8 @@ function Word({ learned = false, word, onChangeCurrentWord }) {
 }
 
 function Text({ onChangeCurrentWord }) {
+  const [activeWordIndex, setActiveWordIndex] = useState(0)
+
   const testArrayOfWords = textArray
 
   return (
@@ -119,8 +116,14 @@ function Text({ onChangeCurrentWord }) {
         return <Word
           word={word}
           key={index}
+          wordIndex={index}
+          active={index === activeWordIndex}
+          setActiveWordIndex={setActiveWordIndex}
           onChangeCurrentWord={onChangeCurrentWord}
-          learned={Math.random() < 0.5}
+          learned={
+            // Math.random() < 0.5
+            false
+          }
         />
       })}
     </div>

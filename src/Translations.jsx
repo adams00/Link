@@ -18,14 +18,19 @@ export function Translations({ currentWord = 'yellow' }) {
             .then(data => setTranslationObject(data))
             .catch(error => { console.log(error) })
     }, [toTranslate])
-    return (
-        <section>
-            {translationObject.translations.map(({ translation, examples }, index) => {
 
-                return (
-                    <Translation key={index} translation={translation} examples={examples} />
-                )
-            })}
-        </section>
+    return (
+        <div>
+            <section>
+                {translationObject.map(({ translation, examples }, index) => {
+
+                    return (
+                        <Translation key={index} translation={translation} examples={examples} />
+                    )
+                })}
+            </section>
+        </div>
+
+
     )
 }
