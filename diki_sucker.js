@@ -4,16 +4,22 @@ const e = require('express');
 
 async function scrape(englishWordToTranslate) {
   const url = `https://diki.pl/slownik-angielskiego?q=${englishWordToTranslate}`
-  // ? Get HTML of the website
-  const response = await axios.get(url)
-  const html = response.data
 
-  // ? Load HTML to cheerio
-  const $ = cheerio.load(html)
+  try {
+    // ? Get HTML of the website
+    const response = await axios.get(url)
+    const html = response.data
 
-  const translations = forEveryPartOfSpeach($);
-  return translations;
+    // ? Load HTML to cheerio
+    const $ = cheerio.load(html)
+
+    const translations = forEveryPartOfSpeach($);
+    return translations;
+  } catch (error) {
+    console.log(error)
+  }
 }
+
 
 module.exports = scrape
 
