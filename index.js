@@ -1,15 +1,15 @@
 const express = require('express');
-const fs = require('node:fs');
-const { send } = require('node:process');
-const { v4: uuidv4 } = require('uuid');
 const fileUpload = require('express-fileupload')
 const path = require('node:path')
-const {checkIfWordExits, getTranslations, addTranslation} = require('./sql/procedures.js')
-const bodyParser = require('body-parser')
+const { checkIfWordExits, getTranslations, addTranslation } = require('./sql/procedures.js')
+const bodyParser = require('body-parser');
+const scrape = require('./diki_sucker.js')
+const fs = require('node:fs')
 
 const filesPayloadExists = require('./middleware/filesPayloadExists');
 const fileExtLimiter = require('./middleware/fileExtLimiter');
 const fileSizeLimiter = require('./middleware/fileSizeLimiter');
+
 
 const server = express();
 
@@ -33,7 +33,6 @@ server.post('/upload',
     fileSizeLimiter,
     (req, res) => {
         const files = req.files
-        console.log(files)
 
         Object.keys(files).forEach(key => {
             const filepath = path.join(__dirname, 'files', files[key].name)
@@ -49,10 +48,10 @@ server.post('/upload',
 
 // Dodaj słowo do bazy danych
 server.post('word/:wordname', async (req, res) => {
-    const {wordname} = req.params;
+    const { wordname } = req.params;
     const isPresent = await checkIfWordExits(wordname);
     let translations = ''
-    if (! isPresent) {
+    if (!isPresent) {
         translations = getTranslationsFromDictionary();
     }
     await addTranslationsToDatabase(translations);
@@ -60,20 +59,26 @@ server.post('word/:wordname', async (req, res) => {
 
 // Dodaj tłumacznie do słowa
 server.post('/translation/', async (req, res) => {
-     const {wordName, translation} = req.body.list[0]
-     await addTranslation(wordName, translation)
-     res.json("Dodano tłumaczenie")
+    const { wordName, translation } = req.body.list[0]
+    await addTranslation(wordName, translation)
+    res.json("Dodano tłumaczenie")
 })
 
 // Pobierz tłumaczenie dla danego słowa
 server.get('/translation/:wordName', async (req, res) => {
-    let translations = await getTranslations(req.params.wordName);
+    const translations = await scrape([req.params.wordName]);
+    // const rawTranslations = fs.readFileSync('./translation_example.json');
+    // const translations = JSON.parse(rawTranslations)
+
+    //const translations = { response: 'everything ok' }
+    //let translations = await getTranslations(req.params.wordName);
     // if (! translations) {
     //     translations = await getTranslationsFromDictionary(wordName);
     // }
     // if (translations) {
     //     await addTranslationsToDatabase(translations) 
     // }
+    //console.log(rawTranslations)
     res.json(translations)
     // Zrobić z tego JSON (w notatkach zapisać jego format)
     // i wysłać na front
@@ -90,4 +95,4 @@ server.use((error, req, res, next) => {
     res.send('<h1>&#12951 Some weird error happend &#12951</h1><p>' + error + '</p>')
 })
 
-server.listen(3001, '127.0.0.1')
+server.listen(3001, '0.0.0.0')
