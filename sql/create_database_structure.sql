@@ -1,9 +1,9 @@
 -- use master
--- go
+-- GO
 -- alter database [MyDatbase] set single_user with rollback immediate
 
 -- drop database [MyDatabase]
---go
+--GO
 
 IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'mini_linq')
   BEGIN
@@ -71,7 +71,7 @@ BEGIN
     CREATE TABLE examples (
         Id INT PRIMARY KEY IDENTITY (1, 1),
         translationId INT,
-		    examle VARCHAR(255)
+		    example VARCHAR(255)
     )
 
 END
@@ -91,22 +91,31 @@ END
 
 GO
 
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_UserWords_Words')
+BEGIN
 ALTER TABLE dbo.user_words
    ADD CONSTRAINT FK_UserWords_Words FOREIGN KEY (wordId)
       REFERENCES dbo.words (Id)
-
+END
 GO
 
-
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_UserFiles_Users')
+BEGIN
 ALTER TABLE dbo.user_files
    ADD CONSTRAINT FK_UserFiles_Users FOREIGN KEY (userId)
       REFERENCES dbo.users (Id)
+END
+
 
 GO
 
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS WHERE CONSTRAINT_NAME ='FK_Examples_Translations')
+BEGIN
 ALTER TABLE dbo.examples
    ADD CONSTRAINT FK_Examples_Translations FOREIGN KEY (translationId)
       REFERENCES dbo.translations (Id)
+END
+
 
 GO
 -- ALTER TABLE user_words

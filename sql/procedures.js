@@ -1,5 +1,10 @@
 
 const sql = require('mssql');
+const fs = require('node:fs');
+const path = require('path');
+
+const initialize = getFile('./create_database_structure.sql')
+const procedures = getFile('./create_stored_procedures.sql')
 
 const sqlConfig = {
   user: 'sa',
@@ -18,13 +23,33 @@ const sqlConfig = {
   }
 };
 
+const initializeArray = initialize.split('GO');
+const proceduresArray = procedures.split('GO');
+
+function getFile(path) {
+  fs.readFileSync(path.resolve(__dirname, path), { encoding: 'utf8' });
+}
+
+var doProcedures = function (files) {
+  return files.reduce((p, file) => {
+    return p.then(() => doProcedure(file));
+  }, Promise.resolve()); // initial
+};
+
+async function doProcedure(procedure) {
+  return new Promise(async (resolve, reject) => {
+    sql.connect(sqlConfig).then(async () => {
+      const x = await sql.batch(procedure);
+      console.log(x.recordset)
+      resolve()
+    })
+  })
+
+}
 
 setTimeout(() => {
-  sql.connect(sqlConfig).then(async () => {
-    const x = await sql.query`SELECT 9`;
-    console.log((await x).recordset)
-  })
-}, 10000)
+  doProcedures([...initializeArray, ...proceduresArray])
+}, 20000)
 
 
 async function checkIfWordExits(wordName) {
@@ -53,12 +78,8 @@ async function addWord(userId = 1, wordName) {
 
 async function addTranslation(wordName, translation) {
   try {
-    //const exists = await checkIfWordExits(wordName);
-    //if (exists.match(/Word.*/)) {
-    const response = await sql.query`usp_add_translation ${wordName}, ${translation}`;
+    await sql.query`usp_add_translation ${wordName}, ${translation}`;
     return `Translation ${translation} added for ${wordName}`
-    //}
-    //return `Word ${wordName} added for user ${userId}`
   } catch (err) {
     console.log(err)
   }
@@ -72,6 +93,16 @@ async function getTranslations(wordName) {
     console.log(err)
   }
 }
+
+async function getExaples(wordName) {
+  try {
+    const response = await sql.query`usp_get_translations ${wordName}`;
+    return response.recordset
+  } catch (err) {
+    console.log(err)
+  }
+}
+
 
 // setTimeout(async ()=> {
 //   const translations = await getTranslations('book');
