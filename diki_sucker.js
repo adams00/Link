@@ -14,7 +14,7 @@ async function scrape(englishWordToTranslate) {
     const $ = cheerio.load(html)
 
     const translations = forEveryPartOfSpeach($);
-    return translations;
+    return { word: englishWordToTranslate, array: translations };
   } catch (error) {
     console.log(error)
   }

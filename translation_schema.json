@@ -1,6 +1,7 @@
- [
+{
+    "word": "heart",
+    "array": [
         {
-            "word": "heart",
             "translation": "serce",
             "examples": [
                 {
@@ -9,4 +10,5 @@
                 }
             ]
         }
-]
+    ]
+}

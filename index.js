@@ -1,10 +1,11 @@
 const express = require('express');
 const fileUpload = require('express-fileupload')
 const path = require('node:path')
-const { checkIfWordExits, getTranslations, addTranslation } = require('./sql/procedures.js')
 const bodyParser = require('body-parser');
 const scrape = require('./diki_sucker.js')
 const fs = require('node:fs')
+
+//const Translation = require('./mongo/setup.js').Translation
 
 const filesPayloadExists = require('./middleware/filesPayloadExists');
 const fileExtLimiter = require('./middleware/fileExtLimiter');
@@ -51,9 +52,9 @@ server.post('word/:wordname', async (req, res) => {
     const { wordname } = req.params;
     const isPresent = await checkIfWordExits(wordname);
     let translations = ''
-    if (!isPresent) {
-        translations = getTranslationsFromDictionary();
-    }
+    // if (!isPresent) {
+    //     translations = getTranslationsFromDictionary();
+    // }
     await addTranslationsToDatabase(translations);
 })
 
@@ -67,21 +68,12 @@ server.post('/translation/', async (req, res) => {
 // Pobierz tłumaczenie dla danego słowa
 server.get('/translation/:wordName', async (req, res) => {
     const translations = await scrape([req.params.wordName]);
-    // const rawTranslations = fs.readFileSync('./translation_example.json');
-    // const translations = JSON.parse(rawTranslations)
-
-    //const translations = { response: 'everything ok' }
-    //let translations = await getTranslations(req.params.wordName);
-    // if (! translations) {
-    //     translations = await getTranslationsFromDictionary(wordName);
-    // }
-    // if (translations) {
-    //     await addTranslationsToDatabase(translations) 
-    // }
+    //const rawTranslations = Translation.find({ word: 'heart' })
+    // const translations = (({ word, array }) => {
+    //     return { word, array }
+    // })(rawTranslations)
     //console.log(rawTranslations)
     res.json(translations)
-    // Zrobić z tego JSON (w notatkach zapisać jego format)
-    // i wysłać na front
 })
 
 // sprawdź czy słowo jest w bazie
