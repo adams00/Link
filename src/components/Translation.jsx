@@ -15,10 +15,10 @@ export function Translation({ translation, examples, isExample }) {
     const hasExample = examples.length > 0;
 
     const style = {
-        width: '100%'
+        marginRight: '10px'
     }
     return (
-        <article className="message is-info">
+        <article className="message is-info" style={style}>
             {/* <div className="message-header">
                 <p className="icon-text">
                     {
@@ -27,7 +27,7 @@ export function Translation({ translation, examples, isExample }) {
                 </p>
             </div> */}
             <div className="message-header">
-                <div className="is-flex is-justify-content-space-between is-flex-direction-row" style={style}>
+                <div className="is-flex is-justify-content-space-between is-flex-direction-row">
                     <div className="is-flex  is-flex-direction-column is-justify-content-center">
                         <p className="">{translation}</p>
                     </div>
@@ -58,22 +58,3 @@ export function Translation({ translation, examples, isExample }) {
         </article >
     )
 }
-
-// {/* <article className="message is-info">
-// <div className="message-header">
-//     <p>{translation}</p>
-//     <button className="delete" aria-label="delete"></button>
-// </div>
-// <div className={`message`}>
-//     {examples.map(({ eng, pl }, index) => {
-//         return (
-//             <React.Fragment key={index}>
-//                 siema
-//                 {/* <p>Angielski: {eng}</p>
-//                 <p>Polski: {pl}</p> */}
-//             </React.Fragment >
-//         )
-//     })
-//     }
-// </div >
-// </article > * /}

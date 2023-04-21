@@ -28,5 +28,4 @@ function Selected({ word = 'pink' }) {
     return (
         <p>You selected: {word}</p>
     )
-
 }
