@@ -14,10 +14,6 @@ const fileSizeLimiter = require('./middleware/fileSizeLimiter');
 
 const server = express();
 
-// server.use('/upload', fileUpload({
-//     useTempFiles : true,
-//     tempFileDir : '/tmp/'
-// }))
 server.use(bodyParser.json());
 server.use((req, res, next) => {
     res.append('Access-Control-Allow-Origin', ['*']);
@@ -36,7 +32,8 @@ server.post('/upload',
         const files = req.files
 
         Object.keys(files).forEach(key => {
-            const filepath = path.join(__dirname, 'files', files[key].name)
+            const filepath = path.join(__dirname, 'files', files[key].name);
+            console.log(filepath)
             files[key].mv(filepath, (err) => {
                 if (err) return res.status(500).json({ status: "error", message: err })
             })
