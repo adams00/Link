@@ -25,7 +25,6 @@ export function FilesUpload() {
             body: data,
         })
             .then((res) => res.json())
-            .then((data) => console.log(data))
             .then(() => { setFileList(null) })
             .catch((err) => console.error(err));
     };
