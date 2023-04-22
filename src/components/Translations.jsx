@@ -15,7 +15,9 @@ export function Translations({ currentWord = 'yellow' }) {
                     return JSON.parse(string)
                 } return string
             })
-            .then(data => setTranslationObject(data))
+            .then(data => {
+                if (!data.error) setTranslationObject(data)
+            })
             .catch(error => { console.log(error) })
     }, [toTranslate])
 
