@@ -8,15 +8,18 @@ async function scrape(englishWordToTranslate) {
   try {
     // ? Get HTML of the website
     const response = await axios.get(url)
+
+
     const html = response.data
 
     // ? Load HTML to cheerio
     const $ = cheerio.load(html)
 
-    const translations = forEveryPartOfSpeach($);
+    const translations = forEveryPartOfSpeach($).filter(({ translation }) => { return translation.length > 0 });
     return { word: englishWordToTranslate, array: translations };
   } catch (error) {
-    console.log(error)
+    console.log(`Could not find ${englishWordToTranslate}`);
+    return { error: `Could not find ${englishWordToTranslate}` }
   }
 }
 
