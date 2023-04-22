@@ -1,32 +1,61 @@
-// const mongoose = require('mongoose');
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
-// const connectionString = 'mongodb://database:27017/link';
+// Replace the placeholder with your Atlas connection string
+const uri = 'mongodb://database:27017/link';
 
-// const json = require('../translation_example.json')
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+}
+);
 
-// mongoose.connect(connectionString, { useNewUrlParser: true }).then(() => {
-//     console.log('everything great')
-// }).catch((e) => {
-//     console.error('Connection error', e);
-// })
+async function run() {
+    try {
+        // Connect the client to the server (optional starting in v4.7)
+        await client.connect();
 
-// const Schema = mongoose.Schema;
-// const TranslationSchema = new Schema({
-//     "word": { type: String },
-//     "array": {
-//         "type": [
-//             "Mixed"
-//         ]
-//     }
-// },
-//     {
-//         timestamps: false,
-//     });
+        // Send a ping to confirm a successful connection
+        await client.db("admin").command({ ping: 1 });
+        await client.db('link').collection('translations').createIndex({ word: 1 })
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    } finally {
+        // Ensures that the client will close when you finish/error
+        await client.close();
+    }
+}
+run()
 
-// const Translation = mongoose.model('translation', TranslationSchema, 'translations');
+async function addTestDocument(document) {
+    await client.connect();
+    const response = await client.db('test').collection('testowa').insertOne(document);
+    await client.close();
+    return response;
+}
 
-// const john = Translation(json);
+async function getTestDocument() {
+    await client.connect();
+    const response = await client.db('test').collection('testowa').findOne({ _id: 8 });
+    await client.close();
+    return response;
+}
 
-// john.save();
+async function getTranslationFromDatabase(word) {
+    await client.connect();
+    const response = await client.db('link').collection('translations').findOne({ word });
+    await client.close();
+    return response;
+}
 
-// module.exports.Translation = Translation;
+async function addTranslationToDatabase(translationObject) {
+    await client.connect();
+    const response = await client.db('link').collection('translations').insertOne(translationObject);
+    await client.close();
+    return response;
+}
+
+
+module.exports = { addTestDocument, getTestDocument, getTranslationFromDatabase, addTranslationToDatabase };

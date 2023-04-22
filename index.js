@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const scrape = require('./diki_sucker.js')
 const fs = require('node:fs')
 
-//const Translation = require('./mongo/setup.js').Translation
+const { addTestDocument, getTestDocument, getTranslationFromDatabase, addTranslationToDatabase } = require('./mongo/setup.js')
 
 const filesPayloadExists = require('./middleware/filesPayloadExists');
 const fileExtLimiter = require('./middleware/fileExtLimiter');
@@ -33,7 +33,6 @@ server.post('/upload',
 
         Object.keys(files).forEach(key => {
             const filepath = path.join(__dirname, 'files', files[key].name);
-            console.log(filepath)
             files[key].mv(filepath, (err) => {
                 if (err) return res.status(500).json({ status: "error", message: err })
             })
@@ -64,13 +63,23 @@ server.post('/translation/', async (req, res) => {
 
 // Pobierz tłumaczenie dla danego słowa
 server.get('/translation/:wordName', async (req, res) => {
-    const translations = await scrape([req.params.wordName]);
+    const { wordName } = req.params
+    let translation = {};
+    translation = await getTranslationFromDatabase(wordName);
+    if (Object.is(translation, null)) {
+        translation = await scrape(wordName);
+        if (translation.error) {
+            addTranslationToDatabase(translation)
+        }
+
+    }
+
     //const rawTranslations = Translation.find({ word: 'heart' })
     // const translations = (({ word, array }) => {
     //     return { word, array }
     // })(rawTranslations)
     //console.log(rawTranslations)
-    res.json(translations)
+    res.json(translation)
 })
 
 // sprawdź czy słowo jest w bazie
@@ -78,6 +87,16 @@ server.get('/word/:wordname', async (req, res) => {
     const word = req.params.wordname;
     const isWord = await checkIfWordExits(word)
     res.json(isWord)
+})
+
+server.get('/test/document', async (req, res) => {
+    const document = await getTestDocument();
+    res.json(document)
+})
+
+server.post('/test/document', async (req, res) => {
+    await addTestDocument({ lubie: 'Placki' });
+    res.json({ message: 'document added' })
 })
 
 server.use((error, req, res, next) => {
