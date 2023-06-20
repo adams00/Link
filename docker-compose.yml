@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  frontend:
+    build: ./Link_frontend
+    ports:
+      - 3000:3000
+    container_name: frontend
+    mem_limit: 500m
+  backend:
+    build: ./Link_backend
+    ports:
+      - 3001:3001
+    container_name: backend
+    depends_on:
+      - database
+    mem_limit: 1000m
+    volumes:
+      - ./Link_backend/files:/app/files
+  database:
+    image: mongo:latest
+    container_name: database
+    volumes:
+      - ./database:/data/db
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 2000M
+        reservations:
+          memory: 1500M
