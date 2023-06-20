@@ -1,7 +1,8 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
-
+const uri = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/link'
 // Replace the placeholder with your Atlas connection string
-const uri = 'mongodb://database:27017/link';
+//const uri = 'mongodb://127.0.0.1:27017/link';
+//const uri = 'mongodb+srv://admin:QEDXWHaKIRTHc7fO@cluster0.hkayo0u.mongodb.net/?retryWrites=true&w=majority'
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -58,4 +59,10 @@ async function addTranslationToDatabase(translationObject) {
 }
 
 
-module.exports = { addTestDocument, getTestDocument, getTranslationFromDatabase, addTranslationToDatabase };
+module.exports = {
+    addTestDocument,
+    getTestDocument,
+    getTranslationFromDatabase,
+    addTranslationToDatabase,
+    uri
+};
