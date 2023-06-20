@@ -8,7 +8,7 @@ export function Text({ onChangeCurrentWord }) {
     const testArrayOfWords = textArray;
 
     return (
-        <div>
+        <div className="textBox">
             {testArrayOfWords.map((word, index) => {
                 return <Word
                     word={word}

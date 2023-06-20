@@ -8,7 +8,7 @@ export function Translations({ currentWord = 'yellow' }) {
     const toTranslate = currentWord;
 
     useEffect(() => {
-        fetch(`http://127.0.0.1:3001/translation/${toTranslate}`)
+        fetch(`http://127.0.0.1:3001/translation/${toTranslate}`, { credentials: 'include' })
             .then((response) => response.json())
             .then(string => {
                 if (typeof string === 'string') {
@@ -18,18 +18,11 @@ export function Translations({ currentWord = 'yellow' }) {
             .then(data => {
                 if (!data.error) setTranslationObject(data)
             })
-            .catch(error => { console.log(error) })
     }, [toTranslate])
 
-    const style = {
-        overflow: 'auto',
-        height: '90vh',
-        position: 'sticky',
-        width: '100%',
-        top: '10px'
-    }
+
     return (
-        <section style={style}>
+        <section className='translations'>
             {translationObject.array.map(({ translation, examples }, index) => {
 
                 return (

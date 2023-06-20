@@ -1,0 +1,37 @@
+.background-green {
+  background-color: greenyellow;
+}
+.background-gold {
+  background-color: gold;
+}
+.background-pink {
+  background-color: pink;
+}
+.background-burlywood {
+  background-color: burlywood;
+}
+.background-silver {
+  background-color: silver;
+}
+.translations {
+  overflow: auto;
+  height: 90vh;
+  position: sticky;
+  width: 100%;
+  top: 10px
+}
+
+@media screen and (max-width: 400px) {
+  .textBox {
+    height: 50vh;
+    overflow: auto;
+  }
+  .translations {
+    display: flex;
+    flex-direction: row;
+    overflow: auto;
+    width: 100vw;
+    height: auto
+  }
+}
+
