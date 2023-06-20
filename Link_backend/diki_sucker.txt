@@ -1,0 +1,4 @@
+1. Główna klasa z listą tłumaczeń: ol.nativeToForeignEntrySlices
+2. Tłumaczenie li>span.hw 
+3. Przykład: ol.nativeToForeignEntrySlices>li>ul>li>div.exampleSentence 
+    (tekst angielski bezpośrednio w div; tłumaczenie jako drugi span [w div div])
