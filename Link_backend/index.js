@@ -1,9 +1,9 @@
 const express = require('express');
 const fileUpload = require('express-fileupload')
-const path = require('node:path')
+const path = require('path')
 const bodyParser = require('body-parser');
 const scrape = require('./diki_sucker.js')
-const fs = require('node:fs');
+const fs = require('fs');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 
